@@ -19,12 +19,13 @@ public class DriverFactory {
             Config config = Config.getInstance();
             String browser = config.getProperty("browser", "chrome"); // Default to Chrome if not specified
             String version = null;
-            if (Boolean.getBoolean(config.getProperty("remoteRun"))) {
+            if (!Boolean.getBoolean(config.getProperty("remoteRun"))) {
                 version = config.getProperty(String.format("%s.browserVersion", browser));
             }
             switch (browser.toLowerCase()) {
                 case "chrome":
                     if (version != null) {
+                        System.out.println("******************" + version);
                         WebDriverManager.chromedriver().driverVersion(version).setup();
                     } else {
                         WebDriverManager.chromedriver().setup();
@@ -56,11 +57,11 @@ public class DriverFactory {
 
     private static ChromeOptions getChromeOptions() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--remote-allow-origins=*");
+          options.addArguments("--headless");
+          options.addArguments("--disable-gpu");
+          options.addArguments("--window-size=1920,1080");
+          options.addArguments("--no-sandbox");
+          options.addArguments("--remote-allow-origins=*");
 
         return options;
     }

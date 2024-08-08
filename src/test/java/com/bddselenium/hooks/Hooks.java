@@ -4,6 +4,9 @@ import com.bddselenium.utils.Config;
 import com.bddselenium.utils.DriverFactory;
 import io.cucumber.java.Before;
 import io.cucumber.java.After;
+import io.cucumber.java.Scenario;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,7 +18,7 @@ public class Hooks {
     WebDriver driver;
 
     @Before
-    public void setUp() {
+    public void setUp() throws InterruptedException {
         try {
             driver = DriverFactory.getDriver();
 
@@ -33,8 +36,14 @@ public class Hooks {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown(Scenario scenario) {
         try {
+            // Capture a screenshot if the scenario fails
+            if (scenario.isFailed()) {
+                byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+                scenario.attach(screenshot, "image/png", scenario.getName());
+            }
+
             if (Boolean.parseBoolean(Config.getInstance().getProperty("closeBrowser"))) {
                 driver.quit();
             }
