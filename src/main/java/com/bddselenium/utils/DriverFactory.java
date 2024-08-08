@@ -13,10 +13,11 @@ public class DriverFactory {
         if (driver == null) {
             Config config = Config.getInstance();
             String browser = config.getProperty("browser");
+            String version = config.getProperty(String.format("%s.browserVersion", browser));
             switch (browser.toLowerCase()) {
                 case "chrome":
                     // Specify the exact ChromeDriver version
-                    WebDriverManager.chromedriver().driverVersion("127.0.6533.99").setup();
+                    WebDriverManager.chromedriver().driverVersion(version).setup();
                     //WebDriverManager.chromedriver().setup();
                     driver = new ChromeDriver();
                     break;
