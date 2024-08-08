@@ -2,6 +2,7 @@ package com.bddselenium.utils;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -17,7 +18,10 @@ public class DriverFactory {
         if (driver == null) {
             Config config = Config.getInstance();
             String browser = config.getProperty("browser", "chrome"); // Default to Chrome if not specified
-            String version = config.getProperty(String.format("%s.browserVersion", browser));
+            String version = null;
+            if (Boolean.getBoolean(config.getProperty("remoteRun"))) {
+                version = config.getProperty(String.format("%s.browserVersion", browser));
+            }
             switch (browser.toLowerCase()) {
                 case "chrome":
                     if (version != null) {
@@ -25,7 +29,7 @@ public class DriverFactory {
                     } else {
                         WebDriverManager.chromedriver().setup();
                     }
-                    driver = new ChromeDriver();
+                    driver = new ChromeDriver(getChromeOptions());
                     break;
                 case "firefox":
                     if (version != null) {
@@ -48,5 +52,16 @@ public class DriverFactory {
             driver.quit();
             driver = null;
         }
+    }
+
+    private static ChromeOptions getChromeOptions() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-allow-origins=*");
+
+        return options;
     }
 }

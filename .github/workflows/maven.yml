@@ -3,7 +3,7 @@ name: Maven Build and Test
 on:
   push:
     branches:
-      - master  # Change this to 'main' if you use 'main' as your default branch
+      - master
 
 jobs:
   build:
@@ -17,7 +17,28 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
-          distribution: 'temurin'  # Use 'temurin' instead of 'adoptopenjdk'
+          distribution: 'temurin'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            wget \
+            unzip \
+            fonts-liberation \
+            libappindicator3-1 \
+            libnss3 \
+            libxss1 \
+            libxtst6 \
+            xdg-utils \
+            libgbm-dev \
+            libasound2 \
+            libnspr4 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxrandr2 \
+            libgtk-3-0 \
+            libxshmfence1
 
       - name: Build with Maven
         run: mvn clean install
@@ -35,5 +56,4 @@ jobs:
           path: target/site/allure-maven-plugin
 
       - name: Serve Allure report
-        run: |
-          mvn allure:serve
+        run: mvn allure:serve
