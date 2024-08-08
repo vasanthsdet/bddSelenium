@@ -15,11 +15,13 @@ public class DriverFactory {
             String browser = config.getProperty("browser");
             switch (browser.toLowerCase()) {
                 case "chrome":
-                    WebDriverManager.chromedriver().setup();
+                    // Specify the exact ChromeDriver version
+                    WebDriverManager.chromedriver().driverVersion("127.0.6533.99").setup();
+                    //WebDriverManager.chromedriver().setup();
                     driver = new ChromeDriver();
                     break;
                 case "firefox":
-                    WebDriverManager.firefoxdriver().setup();
+                    WebDriverManager.firefoxdriver().driverVersion("128.0.3").setup();//setup();
                     driver = new FirefoxDriver();
                     break;
                 default:
