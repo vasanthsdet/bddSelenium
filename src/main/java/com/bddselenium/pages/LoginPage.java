@@ -5,27 +5,28 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.NoSuchElementException;
 
 public class LoginPage {
 
-    WebDriver driver;
+    private final WebDriver driver;
+
+    @FindBy(id = "identifierId")
+    private WebElement emailField;
+
+    @FindBy(xpath = "//button[contains(., 'Next')]")
+    private WebElement nextButton;
+
+    @FindBy(xpath = "//input[@name='Passwd']")
+    private WebElement passwordField;
+
+    @FindBy(xpath = "//div[@aria-live='polite']//span[contains(., 'Wrong password')]")
+    private WebElement wrongPasswordMessageText;
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
-
-    @FindBy(id = "identifierId")
-    WebElement emailField;
-
-    @FindBy(xpath = "//button[contains(., 'Next')]")
-    WebElement nextButton;
-
-    @FindBy(xpath = "//input[@name='Passwd']")
-    WebElement passwordField;
-
-    @FindBy(xpath = "//div[@aria-live='polite']//span[contains(., 'Wrong password')]")
-    WebElement wrongPasswordMessageText;
 
     public void login(String email, String password) {
         PageUtils.waitForElementVisibility(driver, emailField).sendKeys(email);
@@ -36,11 +37,9 @@ public class LoginPage {
 
     public boolean validateWrongPasswordMessage() {
         try {
-            Thread.sleep(5000);
-            return wrongPasswordMessageText.isDisplayed();
-        } catch (Exception e) {
+            return PageUtils.waitForElementVisibility(driver, wrongPasswordMessageText).isDisplayed();
+        } catch (NoSuchElementException e) {
             return false;
         }
     }
-
 }

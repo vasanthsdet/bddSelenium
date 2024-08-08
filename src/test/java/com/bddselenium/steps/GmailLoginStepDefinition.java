@@ -8,15 +8,19 @@ import org.junit.Assert;
 
 public class GmailLoginStepDefinition {
 
-    LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
+    private final LoginPage loginPage;
 
-    @Given("the user is on the login page")
-    public void theUserIsOnTheLoginPage() {
-        loginPage.login("veda.dama2019", "tet");
+    public GmailLoginStepDefinition() {
+        this.loginPage = new LoginPage(DriverFactory.getDriver());
+    }
+
+    @Given("the user logs in with username {string} and password {string}")
+    public void theUserLogsInWithUsernameAndPassword(String username, String password) {
+        loginPage.login(username, password);
     }
 
     @Then("Validate wrong password error text")
     public void validateWrongPasswordErrorText() {
-        Assert.assertTrue(loginPage.validateWrongPasswordMessage());
+        Assert.assertTrue("The wrong password message was not displayed as expected.", loginPage.validateWrongPasswordMessage());
     }
 }

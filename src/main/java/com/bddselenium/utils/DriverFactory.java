@@ -6,26 +6,37 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class DriverFactory {
+    private static final Logger LOGGER = Logger.getLogger(DriverFactory.class.getName());
     private static WebDriver driver;
 
     public static WebDriver getDriver() {
         if (driver == null) {
             Config config = Config.getInstance();
-            String browser = config.getProperty("browser");
+            String browser = config.getProperty("browser", "chrome"); // Default to Chrome if not specified
             String version = config.getProperty(String.format("%s.browserVersion", browser));
             switch (browser.toLowerCase()) {
                 case "chrome":
-                    // Specify the exact ChromeDriver version
-                    WebDriverManager.chromedriver().driverVersion(version).setup();
-                    //WebDriverManager.chromedriver().setup();
+                    if (version != null) {
+                        WebDriverManager.chromedriver().driverVersion(version).setup();
+                    } else {
+                        WebDriverManager.chromedriver().setup();
+                    }
                     driver = new ChromeDriver();
                     break;
                 case "firefox":
-                    WebDriverManager.firefoxdriver().driverVersion("128.0.3").setup();//setup();
+                    if (version != null) {
+                        WebDriverManager.firefoxdriver().driverVersion(version).setup();
+                    } else {
+                        WebDriverManager.firefoxdriver().setup();
+                    }
                     driver = new FirefoxDriver();
                     break;
                 default:
+                    LOGGER.log(Level.SEVERE, "Unsupported browser: " + browser);
                     throw new IllegalArgumentException("Unsupported browser: " + browser);
             }
         }
